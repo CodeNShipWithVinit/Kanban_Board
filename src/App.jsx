@@ -63,7 +63,6 @@ const App = () => {
           ))}
         </div>
       </div>
-      console.log("Debugging");
     </div>
   )
 }
