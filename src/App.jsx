@@ -38,7 +38,7 @@ const App = () => {
           <option value="InProgress">In Progress</option>
           <option value="Done">Done</option>
         </select>
-
+        console.log("Debugging");
         <button className="bg-amber-400 rounded-md px-3 py-1 text-amber-100 font-bold active:scale-95 cursor-pointer" onClick={handleTodo}>Add task</button>
       </div>
 
