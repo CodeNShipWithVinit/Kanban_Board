@@ -7,6 +7,7 @@ const App = () => {
   const [title,setTitle]=useState("");
   const [status,setStatus]=useState("ToDo");
   const [todos,setTodos]=useState([]);
+  const [draggedTodo,setDraggedTodo]= useState(null);
 
   const handleTodo=()=>{
     const newTodo={
@@ -27,6 +28,20 @@ const App = () => {
     setTodos(todos.filter(todo=>todo.id!==id));
   }
 
+  const handleDragStart=(todo)=>{
+  console.log(todo);
+  setDraggedTodo(todo);
+  }
+
+  const handleDragOver=(e)=>{
+    e.preventDefault();
+  }
+
+  const handleDrop=(e,newStatus)=>{
+    e.preventDefault();
+    setTodos()
+  }
+
   return (
     <div>
       <h1 className="text-5xl text-center m-3 font-extrabold text-amber-500">React Kanban Board</h1>
@@ -38,28 +53,27 @@ const App = () => {
           <option value="InProgress">In Progress</option>
           <option value="Done">Done</option>
         </select>
-        console.log("Debugging");
         <button className="bg-amber-400 rounded-md px-3 py-1 text-amber-100 font-bold active:scale-95 cursor-pointer" onClick={handleTodo}>Add task</button>
       </div>
 
       <div className="flex justify-center gap-3">
-        <div className="bg-gray-900 min-h-60 w-80 rounded-md">
+        <div onDragOver={(e)=>handleDragOver(e)} onDrop={(e) => handleDrop(e, "ToDo")} className="bg-gray-900 min-h-60 w-80 rounded-md">
           <div className="bg-blue-700 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">Todo</h1></div>
           {todos.filter(todo=>todo.status==="ToDo").map(todo=>(
-            <Todo key={todo.id} id={todo.id} title={todo.title} removeTodo={removeTodo}/>
+            <Todo key={todo.id} todo={todo} removeTodo={removeTodo} onDragStart={handleDragStart}/>
           ))}
           
         </div>
         <div className="bg-gray-900 min-h-60 w-80 rounded-md">
           <div className="bg-amber-400 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">In Progress</h1></div>
           {todos.filter(todo=>todo.status==="InProgress").map(todo=>(
-            <Todo key={todo.id} id={todo.id} title={todo.title} removeTodo={removeTodo}/>
+            <Todo key={todo.id} todo={todo} removeTodo={removeTodo} onDragStart={handleDragStart}/>
           ))}
         </div>
         <div className="bg-gray-900 min-h-60 w-80 rounded-md">
           <div className="bg-green-600 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">Done</h1></div>
           {todos.filter(todo=>todo.status==="Done").map(todo=>(
-            <Todo key={todo.id} id={todo.id} title={todo.title} removeTodo={removeTodo}/>
+            <Todo key={todo.id} todo={todo} removeTodo={removeTodo} onDragStart={handleDragStart}/>
           ))}
         </div>
       </div>
