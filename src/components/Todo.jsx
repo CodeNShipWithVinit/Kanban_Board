@@ -8,7 +8,6 @@ const Todo = ({todo,removeTodo,onDragStart}) => {
         <div>
             <button className="text-gray-500 cursor-pointer" onClick={()=>removeTodo(todo.id)}>x</button>
         </div>
-        console.log("Debugging");
     </div>
   )
 }
