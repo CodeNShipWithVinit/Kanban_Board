@@ -1,6 +1,7 @@
 import {useState} from "react";
 import "./App.css";
 import Todo from "./components/Todo";
+import DropArea from "./components/DropArea";
 
 const App = () => {
 
@@ -28,6 +29,23 @@ const App = () => {
     setTodos(todos.filter(todo=>todo.id!==id));
   }
 
+  const onDrop=(status,position)=>{
+    console.log(`${activeCard} is going to be dropped in ${status} and at position ${position}`);
+
+    if(activeCard===null || activeCard===undefined)
+    {
+      return;
+    }
+    const todoToMove=todos[activeCard];
+
+    const updatedTodos=todos.filter((todo)=>todo.id!==activeCard);
+    updatedTodos.splice(position,0,{
+      ...todoToMove,
+      status:status
+    })
+
+    setTodos(updatedTodos);
+  }
 
   return (
     <div>
@@ -46,21 +64,34 @@ const App = () => {
       <div className="flex justify-center gap-3">
         <div className="bg-gray-900 min-h-60 w-80 rounded-md">
           <div className="bg-blue-700 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">Todo</h1></div>
-          {todos.filter(todo=>todo.status==="ToDo").map(todo=>(
-            <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard}/>
+          <DropArea onDrop={()=>onDrop(status,0)}/>
+          {todos.filter(todo=>todo.status==="ToDo").map((todo,index)=>(
+            <>
+               <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index} />
+               <DropArea onDrop={()=>onDrop(status,index+1)}/>
+            </>
+           
           ))}
           
         </div>
         <div className="bg-gray-900 min-h-60 w-80 rounded-md">
           <div className="bg-amber-400 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">In Progress</h1></div>
-          {todos.filter(todo=>todo.status==="InProgress").map(todo=>(
-            <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard}/>
+          <DropArea onDrop={()=>onDrop(status,0)}/>
+          {todos.filter(todo=>todo.status==="InProgress").map((todo,index)=>(
+            <>
+              <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index}/>
+              <DropArea onDrop={()=>onDrop(status,index+1)}/>
+            </>
+            
           ))}
         </div>
         <div className="bg-gray-900 min-h-60 w-80 rounded-md">
           <div className="bg-green-600 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">Done</h1></div>
-          {todos.filter(todo=>todo.status==="Done").map(todo=>(
-            <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard}/>
+          {todos.filter(todo=>todo.status==="Done").map((todo,index)=>(
+            <>
+               <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index}/>
+               <DropArea onDrop={()=>onDrop(status,index+1)}/>
+            </>
           ))}
         </div>
       </div>

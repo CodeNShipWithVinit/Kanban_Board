@@ -1,7 +1,7 @@
 
-const Todo = ({todo,removeTodo,setActiveCard}) => {
+const Todo = ({todo,removeTodo,setActiveCard,index}) => {
   return (
-    <div draggable className="bg-gray-800 text-white w-[90%] h-auto m-2 rounded-md p-2 flex justify-between cursor-grab taskCard" onDragStart={()=>setActiveCard(todo.id)} onDragEnd={()=>setActiveCard(null)}>
+    <div draggable key={index} className="bg-gray-800 text-white w-[90%] h-auto m-2 rounded-md p-2 flex justify-between cursor-grab taskCard" onDragStart={()=>setActiveCard(todo.id)} onDragEnd={()=>setActiveCard(null)}>
         <div className="min-w-0 wrap-break-word w-[80%]">
             {todo.title}
         </div>
