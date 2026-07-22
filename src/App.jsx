@@ -36,7 +36,7 @@ const App = () => {
     {
       return;
     }
-    const todoToMove=todos[activeCard];
+    const todoToMove=todos.find(todo => todo.id === activeCard);
 
     const updatedTodos=todos.filter((todo)=>todo.id!==activeCard);
     updatedTodos.splice(position,0,{
@@ -45,6 +45,7 @@ const App = () => {
     })
 
     setTodos(updatedTodos);
+    setActiveCard(null);
   }
 
   return (
@@ -68,7 +69,7 @@ const App = () => {
           {todos.filter(todo=>todo.status==="ToDo").map((todo,index)=>(
             <>
                <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index} />
-               <DropArea onDrop={()=>onDrop(status,index+1)}/>
+               <DropArea onDrop={()=>onDrop("ToDo",todo.id)}/>
             </>
            
           ))}
@@ -80,7 +81,7 @@ const App = () => {
           {todos.filter(todo=>todo.status==="InProgress").map((todo,index)=>(
             <>
               <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index}/>
-              <DropArea onDrop={()=>onDrop(status,index+1)}/>
+              <DropArea onDrop={()=>onDrop("InProgress",todo.id)}/>
             </>
             
           ))}
@@ -90,7 +91,7 @@ const App = () => {
           {todos.filter(todo=>todo.status==="Done").map((todo,index)=>(
             <>
                <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index}/>
-               <DropArea onDrop={()=>onDrop(status,index+1)}/>
+               <DropArea onDrop={()=>onDrop("Done",todo.id)}/>
             </>
           ))}
         </div>

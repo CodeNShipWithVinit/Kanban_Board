@@ -8,7 +8,7 @@ const DropArea = ({onDrop}) => {
       className={
         showDrop
           ? `bg-gray-500 text-white w-[90%] h-auto m-2 rounded-md p-2 flex justify-between cursor-grab taskCard opacity-5`
-          : `opacity-1`
+          : `opacity-0`
       }
       onDragEnter={() => setShowDrop(true)}
       onDragLeave={() => setShowDrop(false)}
