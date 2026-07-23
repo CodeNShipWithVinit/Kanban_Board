@@ -1,103 +1,69 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import "./App.css";
-import Todo from "./components/Todo";
-import DropArea from "./components/DropArea";
+import TodoColumn from "./components/TodoColumn";
 
 const App = () => {
 
-  const [title,setTitle]=useState("");
-  const [status,setStatus]=useState("ToDo");
-  const [todos,setTodos]=useState([]);
-  const [activeCard,setActiveCard]=useState(null);
- 
-  const handleTodo=()=>{
-    const newTodo={
-      id:Date.now(),
-      title,
-      status
-    }
-    if(newTodo.title.trim()==="")
-    {
-      return;
-    }
-    setTodos(prev=>[...prev,newTodo]);
-    setTitle("");
-    setStatus("ToDo");
+  const oldTasks=localStorage.getItem("tasks");
+  const [tasks,setTasks]=useState(JSON.parse(oldTasks) || []);
+  const [taskData,setTaskData]=useState({
+    title:"",
+    status:"ToDo"
+  });
+
+  const handleChange=(e)=>{
+    const {name,value}=e.target;
+    setTaskData(prev=>(
+      {...prev,
+      [name]:value,
+      }
+    ))
   }
 
-  const removeTodo=(id)=>{
-    setTodos(todos.filter(todo=>todo.id!==id));
-  }
-
-  const onDrop=(status,position)=>{
-    console.log(`${activeCard} is going to be dropped in ${status} and at position ${position}`);
-
-    if(activeCard===null || activeCard===undefined)
-    {
-      return;
-    }
-    const todoToMove=todos.find(todo => todo.id === activeCard);
-
-    const updatedTodos=todos.filter((todo)=>todo.id!==activeCard);
-    updatedTodos.splice(position,0,{
-      ...todoToMove,
-      status:status
+  const handleTask=()=>{
+    console.log(taskData);
+    if (!taskData.title.trim()) return;
+    
+    setTasks((prev)=>(
+      [...prev,taskData]
+    ));
+    setTaskData({
+      title:"",
+      status:"ToDo"
     })
-
-    setTodos(updatedTodos);
-    setActiveCard(null);
   }
 
+  const handleDelete=(taskIndex)=>{
+    const newTasks=tasks.filter((task,index)=>index!==taskIndex);
+    setTasks(newTasks);
+  }
+
+  useEffect(()=>{
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+  },[tasks]);
+
+  
   return (
     <div>
       <h1 className="text-5xl text-center m-3 font-extrabold text-amber-500">React Kanban Board</h1>
       <div className="flex gap-2 justify-center m-6">
-        <input className="bg-amber-50 rounded-md px-3 py-1 outline-none" onChange={(e)=>setTitle(e.target.value)} type="text" value={title} placeholder="Add a new task..." />
+        <input className="bg-amber-50 rounded-md px-3 py-1 outline-none" onChange={handleChange} name="title" type="text" value={taskData.title} placeholder="Add a new task..." />
 
-        <select className="bg-amber-50 rounded-md px-3 py-1 outline-none" value={status} name="" onChange={(e)=>setStatus(e.target.value)}>
+        <select className="bg-amber-50 rounded-md px-3 py-1 outline-none" value={taskData.status} name="status" onChange={handleChange}>
           <option value="ToDo">To Do</option>
           <option value="InProgress">In Progress</option>
           <option value="Done">Done</option>
         </select>
-        <button className="bg-amber-400 rounded-md px-3 py-1 text-amber-100 font-bold active:scale-95 cursor-pointer" onClick={handleTodo}>+Add task</button>
+        <button className="bg-amber-400 rounded-md px-3 py-1 text-amber-100 font-bold active:scale-95 cursor-pointer" onClick={handleTask}>+Add task</button>
       </div>
 
       <div className="flex justify-center gap-3">
-        <div className="bg-gray-900 min-h-60 w-80 rounded-md">
-          <div className="bg-blue-700 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">Todo</h1></div>
-          <DropArea onDrop={()=>onDrop(status,0)}/>
-          {todos.filter(todo=>todo.status==="ToDo").map((todo,index)=>(
-            <>
-               <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index} />
-               <DropArea onDrop={()=>onDrop("ToDo",todo.id)}/>
-            </>
-           
-          ))}
-          
-        </div>
-        <div className="bg-gray-900 min-h-60 w-80 rounded-md">
-          <div className="bg-amber-400 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">In Progress</h1></div>
-          <DropArea onDrop={()=>onDrop(status,0)}/>
-          {todos.filter(todo=>todo.status==="InProgress").map((todo,index)=>(
-            <>
-              <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index}/>
-              <DropArea onDrop={()=>onDrop("InProgress",todo.id)}/>
-            </>
-            
-          ))}
-        </div>
-        <div className="bg-gray-900 min-h-60 w-80 rounded-md">
-          <div className="bg-green-600 w-full h-10 rounded-md"><h1 className="font-bold text-white text-center">Done</h1></div>
-          {todos.filter(todo=>todo.status==="Done").map((todo,index)=>(
-            <>
-               <Todo key={todo.id} todo={todo} removeTodo={removeTodo} setActiveCard={setActiveCard} index={index}/>
-               <DropArea onDrop={()=>onDrop("Done",todo.id)}/>
-            </>
-          ))}
-        </div>
+        <TodoColumn title="ToDo" status="ToDo" tasks={tasks} handleDelete={handleDelete} /> 
+        <TodoColumn title="InProgress" status="InProgress" tasks={tasks} handleDelete={handleDelete} /> 
+        <TodoColumn title="Done" status="Done" tasks={tasks} handleDelete={handleDelete} /> 
+      
       </div>
 
-      <h1 className="text-white">ActiveCard-{activeCard}</h1>
     </div>
   )
 }
